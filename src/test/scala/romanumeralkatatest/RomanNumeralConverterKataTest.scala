@@ -2015,6 +2015,6 @@ class RomanNumeralConverterKataTest extends FlatSpec with ShouldMatchers with Ta
   )
 
   forAll (numerals) { (arabic: Int, roman: String) => {
-    RomanNumeralConverter.arabicToString(arabic) should be === roman
+    RomanNumeralConverter.arabicToRomanString(arabic) should be === roman
   }}
 }

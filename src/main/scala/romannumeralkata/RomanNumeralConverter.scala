@@ -8,7 +8,7 @@ object RomanNumeralConverter {
   private val hundreds = new OneFivesAndTensSymbolPattern(100, "C", "D", "M")
   private val thousands = new OnesSymbolPattern(1000, "M")
 
-  def arabicToString (arabic: Int): String = {
+  def arabicToRomanString (arabic: Int): String = {
     List(thousands, hundreds, tens, ones) map { _.getSymbol(arabic) } mkString ""
   }
 
