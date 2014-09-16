@@ -3,6 +3,50 @@ package romannumeralkata
 
 object RomanNumeralConverter {
 
+  private val toArabic = Map(
+    'I' -> 1,
+    'V' -> 5,
+    'X' -> 10,
+    'L' -> 50,
+    'C' -> 100,
+    'D' -> 500,
+    'M' -> 1000
+  )
+
+  def romanStringToArabic (roman: String): Int = {
+    // Work begins with a sum of zero, and no previous character
+    val initial: (Int, Option[Char]) = (0, None)
+
+    roman.foldLeft (initial) ((acc: (Int, Option[Char]), curr: Char) => {
+      val currVal = toArabic(curr)
+
+      acc match {
+        // Starting case - just accept the current value and letter
+        // as the sum and previous character for the next round
+        case (_, None) => (currVal, Some(curr))
+
+        case (sum, Some(prev)) => {
+          val prevVal = toArabic(prev)
+
+          // The next value is either an addition or a subtraction, depending on whether
+          // the current value is greater than the previous value or not
+          val next = if (currVal > prevVal) {
+            // When current is greater than previous, invoke subtractive principle
+            // The previous value is subtracted from the current, plus we remove its
+            // value from the sum again since it can't be an addition
+            currVal - (prevVal * 2)
+          } else {
+            // Otherwise, it's just a simple addition
+            currVal
+          }
+
+          // The item of work for the next round is the sum + next and the current character
+          (sum + next, Some(curr))
+        }
+      }
+    })._1 // When the work is done we take the sum, the first element of the tuple
+  }
+
   private val ones = new OneFivesAndTensSymbolPattern(1, "I", "V", "X")
   private val tens = new OneFivesAndTensSymbolPattern(10, "X", "L", "C")
   private val hundreds = new OneFivesAndTensSymbolPattern(100, "C", "D", "M")
