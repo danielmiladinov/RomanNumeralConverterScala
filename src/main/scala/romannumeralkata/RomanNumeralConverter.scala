@@ -17,7 +17,7 @@ object RomanNumeralConverter {
     // Work begins with a sum of zero, and no previous character
     val initial: (Int, Option[Char]) = (0, None)
 
-    roman.foldLeft (initial) ((acc: (Int, Option[Char]), curr: Char) => {
+    roman.foldRight (initial) ((curr: Char, acc: (Int, Option[Char])) => {
       val currVal = toArabic(curr)
 
       acc match {
@@ -25,24 +25,9 @@ object RomanNumeralConverter {
         // as the sum and previous character for the next round
         case (_, None) => (currVal, Some(curr))
 
-        case (sum, Some(prev)) => {
-          val prevVal = toArabic(prev)
-
-          // The next value is either an addition or a subtraction, depending on whether
-          // the current value is greater than the previous value or not
-          val next = if (currVal > prevVal) {
-            // When current is greater than previous, invoke subtractive principle
-            // The previous value is subtracted from the current, plus we remove its
-            // value from the sum again since it can't be an addition
-            currVal - (prevVal * 2)
-          } else {
-            // Otherwise, it's just a simple addition
-            currVal
-          }
-
-          // The item of work for the next round is the sum + next and the current character
-          (sum + next, Some(curr))
-        }
+        case (sum, Some(prev)) =>
+          val nextSum = if (toArabic(prev) > currVal) sum - currVal else sum + currVal
+          (nextSum, Some(curr))
       }
     })._1 // When the work is done we take the sum, the first element of the tuple
   }
